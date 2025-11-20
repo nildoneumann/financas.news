@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finanças Agora</title>
+  <link rel="stylesheet" href="styles.css">
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+}
+
+header {
+  background: #1a237e;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+#news-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.card img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.card h3 {
+  margin: 10px 0;
+}
+
+.card p {
+  color: #555;
+}
+
+.card a {
+  display: inline-block;
+  margin-top: 10px;
+  color: #1a237e;
+  font-weight: bold;
+  text-decoration: none;
+}
+</style>
+
+</head>
+<body>
+
+  <header>
+    <h1>Finanças Agora</h1>
+  </header>
+
+  <main id="news-container"></main>
+
+  <script src="app.js"></script>
+<script>
+const container = document.getElementById("news-container");
+
+async function carregarNoticias() {
+  const url = `https://gnews.io/api/v1/search?q=finanças&lang=pt&max=10&token=161da9588ee14b76a404bd652af8b9dc`;
+
+  try {
+    const resposta = await fetch(url);
+    const dados = await resposta.json();
+
+    console.log(dados); // <-- ajuda a verificar se veio algo
+
+    container.innerHTML = "";
+
+    if (!dados.articles || dados.articles.length === 0) {
+      container.innerHTML = "<p>Nenhuma notícia encontrada.</p>";
+      return;
+    }
+
+    dados.articles.forEach(noticia => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        <img src="${noticia.image || ''}" alt="">
+        <h3>${noticia.title}</h3>
+        <p>${noticia.description || ''}</p>
+        <a href="${noticia.url}" target="_blank">Ler mais</a>
+      `;
+
+      container.appendChild(card);
+    });
+  } catch (erro) {
+    container.innerHTML = "<p>Erro ao carregar notícias.</p>";
+    console.error(erro);
+  }
+}
+
+carregarNoticias();
+
+</script>
+</body>
+</html>
